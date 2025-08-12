@@ -1,0 +1,28 @@
+@startuml
+!define PATTERN class
+
+PATTERN "Strategy Pattern" as Strategy {
+    CompressionType enum with
+    different compression strategies
+}
+
+PATTERN "Factory Pattern" as Factory {
+    BinaryExtractor creates appropriate
+    binary based on platform
+}
+
+PATTERN "Template Method" as Template {
+    VideoCompressorImpl handles
+    common compression flow
+}
+
+PATTERN "Facade Pattern" as Facade {
+    VideoCompressor interface provides
+    simple API hiding complexity
+}
+
+Strategy --> CompressionType
+Factory --> BinaryExtractor
+Template --> VideoCompressorImpl
+Facade --> VideoCompressor
+@enduml

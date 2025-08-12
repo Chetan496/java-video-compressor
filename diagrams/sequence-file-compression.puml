@@ -1,0 +1,33 @@
+@startuml
+participant Client
+participant VideoCompressorImpl
+participant FileManager
+participant FFmpegWrapper
+participant BinaryExtractor
+participant PlatformDetector
+
+Client -> VideoCompressorImpl: compress(filePath, config)
+VideoCompressorImpl -> FileManager: fileExists(filePath)
+FileManager --> VideoCompressorImpl: true
+VideoCompressorImpl -> VideoCompressorImpl: validateInput(filePath, config)
+VideoCompressorImpl -> VideoCompressorImpl: prepareOutputPath(filePath, config)
+VideoCompressorImpl -> FileManager: getFileSize(filePath)
+FileManager --> VideoCompressorImpl: originalSize
+
+VideoCompressorImpl -> FFmpegWrapper: compress(inputPath, outputPath, config)
+FFmpegWrapper -> BinaryExtractor: extractFFmpegBinary()
+BinaryExtractor -> PlatformDetector: detectPlatform()
+PlatformDetector --> BinaryExtractor: Platform.LINUX
+BinaryExtractor -> PlatformDetector: getBinaryName()
+PlatformDetector --> BinaryExtractor: "ffmpeg"
+BinaryExtractor --> FFmpegWrapper: ffmpegPath
+
+FFmpegWrapper -> FFmpegWrapper: buildCommand(inputPath, outputPath, config)
+FFmpegWrapper -> FFmpegWrapper: execute ProcessBuilder
+FFmpegWrapper --> VideoCompressorImpl: success=true
+
+VideoCompressorImpl -> FileManager: getFileSize(outputPath)
+FileManager --> VideoCompressorImpl: compressedSize
+VideoCompressorImpl -> VideoCompressorImpl: create CompressionResult
+VideoCompressorImpl --> Client: CompressionResult
+@enduml

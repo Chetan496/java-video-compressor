@@ -1,0 +1,24 @@
+@startuml
+start
+:Input: File Path or Byte Array;
+if (Input Type?) then (File Path)
+    :Validate File Exists;
+else (Byte Array)
+    :Create Temp File;
+endif
+:Get Original File Size;
+:Prepare Output Path;
+:Extract FFmpeg Binary;
+:Build FFmpeg Command;
+:Execute FFmpeg Process;
+if (Success?) then (Yes)
+    :Get Compressed File Size;
+    :Calculate Compression Ratio;
+    :Create Success Result;
+else (No)
+    :Create Error Result;
+endif
+:Cleanup Temp Files;
+:Return Result;
+stop
+@enduml

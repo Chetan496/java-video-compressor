@@ -1,0 +1,18 @@
+@startuml
+[*] --> Initialized
+Initialized --> ValidatingInput : compress() called
+ValidatingInput --> PreparingFiles : validation passed
+ValidatingInput --> Error : validation failed
+
+PreparingFiles --> ExtractingBinary : files ready
+ExtractingBinary --> BuildingCommand : binary extracted
+BuildingCommand --> ExecutingFFmpeg : command built
+
+ExecutingFFmpeg --> ProcessingVideo : FFmpeg started
+ProcessingVideo --> Success : compression completed
+ProcessingVideo --> Error : compression failed
+
+Success --> CleaningUp : creating result
+Error --> CleaningUp : creating error result
+CleaningUp --> [*] : cleanup completed
+@enduml

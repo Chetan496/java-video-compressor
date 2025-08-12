@@ -1,0 +1,18 @@
+@startuml
+participant Client
+participant VideoCompressorImpl
+participant FileManager
+participant FFmpegWrapper
+
+Client -> VideoCompressorImpl: compress(byteArray, config)
+VideoCompressorImpl -> FileManager: createTempFile(byteArray, "input")
+FileManager --> VideoCompressorImpl: tempInputPath
+
+VideoCompressorImpl -> VideoCompressorImpl: compress(tempInputPath, config)
+note right: Delegates to file-based compression
+VideoCompressorImpl -> FFmpegWrapper: compress(tempInputPath, outputPath, config)
+FFmpegWrapper --> VideoCompressorImpl: success=true
+
+VideoCompressorImpl -> FileManager: deleteFile(tempInputPath)
+VideoCompressorImpl --> Client: CompressionResult
+@enduml

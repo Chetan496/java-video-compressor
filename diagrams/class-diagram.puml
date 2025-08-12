@@ -1,0 +1,113 @@
+@startuml
+interface VideoCompressor {
+    +compress(byte[], CompressionConfig) : CompressionResult
+    +compress(String, CompressionConfig) : CompressionResult
+}
+
+class VideoCompressorImpl {
+    -ffmpegWrapper : FFmpegWrapper
+    -fileManager : FileManager
+    +compress(byte[], CompressionConfig) : CompressionResult
+    +compress(String, CompressionConfig) : CompressionResult
+    -validateInput(String, CompressionConfig) : void
+    -prepareOutputPath(String, CompressionConfig) : String
+}
+
+class CompressionConfig {
+    -type : CompressionType
+    -outputFormat : String
+    -outputPath : String
+    +getType() : CompressionType
+    +setType(CompressionType) : void
+    +getOutputFormat() : String
+    +setOutputFormat(String) : void
+    +getOutputPath() : String
+    +setOutputPath(String) : void
+}
+
+class CompressionResult {
+    -outputPath : String
+    -originalSize : long
+    -compressedSize : long
+    -compressionRatio : double
+    -success : boolean
+    -errorMessage : String
+    +getOutputPath() : String
+    +setOutputPath(String) : void
+    +getOriginalSize() : long
+    +setOriginalSize(long) : void
+    +getCompressedSize() : long
+    +setCompressedSize(long) : void
+    +getCompressionRatio() : double
+    +isSuccess() : boolean
+    +setSuccess(boolean) : void
+    +getErrorMessage() : String
+    +setErrorMessage(String) : void
+    -calculateCompressionRatio() : void
+}
+
+enum CompressionType {
+    LOSSY
+    LOSSLESS
+    MAX_COMPRESSION
+    -value : String
+    +getValue() : String
+}
+
+class FFmpegWrapper {
+    -binaryExtractor : BinaryExtractor
+    -ffmpegPath : String
+    +compress(String, String, CompressionConfig) : boolean
+    -initializeBinary() : void
+    -buildCommand(String, String, CompressionConfig) : List<String>
+}
+
+class FileManager {
+    +createTempFile(byte[], String) : String
+    +fileExists(String) : boolean
+    +getFileSize(String) : long
+    +deleteFile(String) : void
+    +getBaseName(String) : String
+}
+
+class PlatformDetector <<utility>> {
+    +{static}detectPlatform() : Platform
+    +{static}getBinaryName() : String
+}
+
+enum Platform {
+    WINDOWS
+    LINUX
+    UNSUPPORTED
+}
+
+class BinaryExtractor {
+    -{static}BINARY_RESOURCE_PATH : String
+    +extractFFmpegBinary() : String
+}
+
+class VideoCompressionException <<exception>> {
+    +VideoCompressionException(String)
+    +VideoCompressionException(String, Throwable)
+}
+
+class UnsupportedFormatException <<exception>> {
+    +UnsupportedFormatException(String)
+}
+
+class FFmpegExecutionException <<exception>> {
+    +FFmpegExecutionException(String, Throwable)
+}
+
+VideoCompressor <|.. VideoCompressorImpl
+VideoCompressorImpl --> FFmpegWrapper
+VideoCompressorImpl --> FileManager
+VideoCompressorImpl --> CompressionConfig
+VideoCompressorImpl --> CompressionResult
+CompressionConfig --> CompressionType
+FFmpegWrapper --> BinaryExtractor
+BinaryExtractor --> PlatformDetector
+PlatformDetector --> Platform
+VideoCompressionException <|-- UnsupportedFormatException
+VideoCompressionException <|-- FFmpegExecutionException
+@enduml

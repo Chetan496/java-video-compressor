@@ -1,0 +1,20 @@
+@startuml
+class Exception <<Java Built-in>>
+
+class VideoCompressionException {
+    +VideoCompressionException(String message)
+    +VideoCompressionException(String message, Throwable cause)
+}
+
+class UnsupportedFormatException {
+    +UnsupportedFormatException(String message)
+}
+
+class FFmpegExecutionException {
+    +FFmpegExecutionException(String message, Throwable cause)
+}
+
+Exception <|-- VideoCompressionException
+VideoCompressionException <|-- UnsupportedFormatException
+VideoCompressionException <|-- FFmpegExecutionException
+@enduml
